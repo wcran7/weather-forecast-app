@@ -1,18 +1,33 @@
 const express = require('express');
 const axios = require('axios');
+require('dotenv').config(); 
+
 const router = express.Router();
 
-const API_KEY = process.env.OPENWEATHER_API_KEY;
+const API_KEY = process.env.WEATHERAPI_KEY;
 const CITY = 'Brisbane';
-const BASE_URL = `https://api.openweathermap.org/data/2.5/onecall?lat=-27.4705&lon=153.026&exclude=minutely,hourly&appid=${API_KEY}&units=metric`;
+
+if (!API_KEY) {
+  console.error("API Key is missing. Please add WEATHERAPI_KEY in your .env file.");
+}
 
 router.get('/', async (req, res) => {
+  if (!API_KEY) {
+    return res.status(500).json({ message: 'API key is missing or invalid' });
+  }
+
   try {
-    const response = await axios.get(BASE_URL);
-    const { current, daily } = response.data;
+    const currentWeatherURL = `https://api.weatherapi.com/v1/current.json?key=${API_KEY}&q=${CITY}&aqi=no`;
+    const forecastURL = `https://api.weatherapi.com/v1/forecast.json?key=${API_KEY}&q=${CITY}&days=7&aqi=no&alerts=no`;
+
+    const [currentWeatherResponse, forecastResponse] = await Promise.all([
+      axios.get(currentWeatherURL),
+      axios.get(forecastURL),
+    ]);
+
     res.json({
-      current: current,
-      forecast: daily.slice(1, 8) // next 7 days
+      current: currentWeatherResponse.data.current,
+      forecast: forecastResponse.data.forecast.forecastday,
     });
   } catch (error) {
     console.error(error);
