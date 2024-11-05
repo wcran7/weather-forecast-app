@@ -11,6 +11,28 @@ body {
   margin-top: 20px;
 }
 
+.sunny-gradient {
+  background: linear-gradient(to right, #87CEEB, #B0E0E6);
+  color: #333;
+}
+
+.overcast-gradient {
+  background: linear-gradient(to right, #C0C0C0, #A9A9A9);
+  color: #fff;
+}
+
+.forecast-card {
+  display: flex;
+  align-items: center;
+  border-radius: 8px;
+}
+
+.weather-icon {
+  width: 40px;
+  height: 40px;
+  margin-right: 10px;
+}
+
 #current-weather, #weather-forecast div {
   margin: 10px 0;
 }
